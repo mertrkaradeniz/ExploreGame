@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/gameListFragment"
         android:name="com.mertrizakaradeniz.exploregame.ui.fragments.list.GameListFragment"
-        android:label="fragment_game_list"
+        android:label="Explore Game"
         tools:layout="@layout/fragment_game_list" >
         <action
             android:id="@+id/action_gameListFragment_to_gameDetailFragment"
@@ -17,12 +17,12 @@
     <fragment
         android:id="@+id/gameDetailFragment"
         android:name="com.mertrizakaradeniz.exploregame.ui.fragments.detail.GameDetailFragment"
-        android:label="fragment_game_detail"
+        android:label="Game Detail"
         tools:layout="@layout/fragment_game_detail" />
     <fragment
         android:id="@+id/favouriteGameFragment"
         android:name="com.mertrizakaradeniz.exploregame.ui.fragments.favourite.FavouriteGameFragment"
-        android:label="fragment_favourite_game"
+        android:label="Favourite Games"
         tools:layout="@layout/fragment_favourite_game" >
         <action
             android:id="@+id/action_favouriteGameFragment_to_gameDetailFragment"

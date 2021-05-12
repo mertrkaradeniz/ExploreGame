@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">ExploreGame</string>
+    <string name="gamesMenuTitle">Games</string>
+    <string name="favouriteMenuTitle">Favourite</string>
 </resources>
