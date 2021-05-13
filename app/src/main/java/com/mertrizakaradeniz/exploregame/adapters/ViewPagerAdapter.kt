@@ -1,5 +1,6 @@
 package com.mertrizakaradeniz.exploregame.adapters
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -34,6 +35,7 @@ class ViewPagerAdapter(private val gameList: List<Game>) :
             }
 
             root.setOnClickListener {
+                Log.d("SA", "tiklandi")
                 onItemClickListener?.let { it(currentItem) }
             }
         }

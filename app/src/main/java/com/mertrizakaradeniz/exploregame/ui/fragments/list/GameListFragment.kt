@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
 import com.mertrizakaradeniz.exploregame.R
@@ -21,7 +22,6 @@ import com.mertrizakaradeniz.exploregame.utils.Resource
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import okhttp3.internal.wait
 
 @AndroidEntryPoint
 class GameListFragment : Fragment(R.layout.fragment_game_list) {
@@ -90,6 +90,12 @@ class GameListFragment : Fragment(R.layout.fragment_game_list) {
             adapter = viewPagerAdapter
             orientation = ViewPager2.ORIENTATION_HORIZONTAL
         }
+        viewPagerAdapter.setOnItemClickListener { game ->
+            val bundle = Bundle().apply {
+                putSerializable("game", game)
+            }
+            findNavController().navigate(R.id.action_gameListFragment_to_gameDetailFragment, bundle)
+        }
         binding.dotsIndicator.setViewPager2(binding.viewPager)
     }
 
@@ -107,6 +113,12 @@ class GameListFragment : Fragment(R.layout.fragment_game_list) {
             adapter = gameListAdapter
             layoutManager = LinearLayoutManager(activity)
             setHasFixedSize(true)
+        }
+        gameListAdapter.setOnItemClickListener { game ->
+            val bundle = Bundle().apply {
+                putSerializable("game", game)
+            }
+            findNavController().navigate(R.id.action_gameListFragment_to_gameDetailFragment, bundle)
         }
     }
 

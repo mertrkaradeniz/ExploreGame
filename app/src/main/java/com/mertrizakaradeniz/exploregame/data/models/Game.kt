@@ -4,6 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 
 @Entity(tableName = "game")
 data class Game(
@@ -19,6 +20,4 @@ data class Game(
     val imageUrl: String,
     @ColumnInfo(name = "is_fav")
     var isFav: Boolean = false
-) {
-
-}
+) : Serializable

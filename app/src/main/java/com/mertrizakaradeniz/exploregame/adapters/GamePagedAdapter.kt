@@ -1,20 +1,19 @@
 package com.mertrizakaradeniz.exploregame.adapters
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
-import coil.transform.CircleCropTransformation
 import com.mertrizakaradeniz.exploregame.data.models.Game
 import com.mertrizakaradeniz.exploregame.databinding.GameItemBinding
 
 class GamePagedAdapter : PagingDataAdapter<Game, GamePagedAdapter.ViewHolder>(diffCallback) {
 
     inner class ViewHolder(val binding: GameItemBinding) :
-        RecyclerView.ViewHolder(binding.root) {
-    }
+        RecyclerView.ViewHolder(binding.root)
 
     companion object {
         val diffCallback = object : DiffUtil.ItemCallback<Game>() {
@@ -35,10 +34,12 @@ class GamePagedAdapter : PagingDataAdapter<Game, GamePagedAdapter.ViewHolder>(di
             tvName.text = "${currentItem?.name}"
             tvReleased.text = "Released at: ${currentItem?.released}"
             tvRating.text = "Rating: ${currentItem?.rating}"
-
             val imageLink = currentItem?.imageUrl
             imgGame.load(imageLink) {
                 crossfade(true)
+            }
+            root.setOnClickListener {
+                onItemClickListener?.let { it(currentItem!!) }
             }
         }
     }
@@ -51,5 +52,11 @@ class GamePagedAdapter : PagingDataAdapter<Game, GamePagedAdapter.ViewHolder>(di
                 false
             )
         )
+    }
+
+    private var onItemClickListener: ((Game) -> Unit)? = null
+
+    fun setOnItemClickListener(listener: (Game) -> Unit) {
+        onItemClickListener = listener
     }
 }

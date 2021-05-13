@@ -18,7 +18,11 @@
         android:id="@+id/gameDetailFragment"
         android:name="com.mertrizakaradeniz.exploregame.ui.fragments.detail.GameDetailFragment"
         android:label="Game Detail"
-        tools:layout="@layout/fragment_game_detail" />
+        tools:layout="@layout/fragment_game_detail" >
+        <argument
+            android:name="Game"
+            app:argType="com.mertrizakaradeniz.exploregame.data.models.Game" />
+    </fragment>
     <fragment
         android:id="@+id/favouriteGameFragment"
         android:name="com.mertrizakaradeniz.exploregame.ui.fragments.favourite.FavouriteGameFragment"
