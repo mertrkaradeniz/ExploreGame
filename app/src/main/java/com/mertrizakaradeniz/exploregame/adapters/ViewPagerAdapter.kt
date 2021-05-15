@@ -35,7 +35,6 @@ class ViewPagerAdapter(private val gameList: List<Game>) :
             }
 
             root.setOnClickListener {
-                Log.d("SA", "tiklandi")
                 onItemClickListener?.let { it(currentItem) }
             }
         }

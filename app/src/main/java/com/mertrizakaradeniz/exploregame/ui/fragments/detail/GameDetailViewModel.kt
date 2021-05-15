@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mertrizakaradeniz.exploregame.data.models.Game
+import com.mertrizakaradeniz.exploregame.data.models.GamesResponse
 import com.mertrizakaradeniz.exploregame.data.repository.GameRepository
 import com.mertrizakaradeniz.exploregame.utils.Resource
 import com.mertrizakaradeniz.exploregame.utils.Utils
@@ -24,6 +25,8 @@ class GameDetailViewModel @Inject constructor(
     private val _gameDetail: MutableLiveData<Resource<Game>> = MutableLiveData()
     val gameDetail: LiveData<Resource<Game>> = _gameDetail
 
+
+
     fun fetchGameDetail(context: Context, id: String) = viewModelScope.launch {
         safeFetchGameDetailCall(context, id)
     }
@@ -32,7 +35,7 @@ class GameDetailViewModel @Inject constructor(
         _gameDetail.postValue(Resource.Loading())
         try {
             if (Utils.hasInternetConnection(context)) {
-                val response = gameRepository.fetchGameDetail(id)
+                val response = gameRepository.getGameDetail(id)
                 _gameDetail.postValue(handleGameDetailResponse(response))
             } else {
                 _gameDetail.postValue(Resource.Error("No internet connection"))

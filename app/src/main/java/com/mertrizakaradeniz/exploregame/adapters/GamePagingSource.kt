@@ -1,15 +1,17 @@
 package com.mertrizakaradeniz.exploregame.adapters
 
+import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import com.mertrizakaradeniz.exploregame.data.local.GameDatabase
 import com.mertrizakaradeniz.exploregame.data.models.Game
 import com.mertrizakaradeniz.exploregame.data.remote.GameApi
-import com.mertrizakaradeniz.exploregame.utils.Constant.API_KEY
+import com.mertrizakaradeniz.exploregame.data.repository.GameRepository
 import java.lang.Exception
 
 
 class GamePagingSource(
-    private val apiService: GameApi
+    private val repository: GameRepository
 ) : PagingSource<Int, Game>() {
 
     override fun getRefreshKey(state: PagingState<Int, Game>): Int? {
@@ -20,11 +22,11 @@ class GamePagingSource(
 
         return try {
             val currentPage = params.key ?: 1
-            val response = apiService.fetchGameList(API_KEY,currentPage)
+            val response = repository.getGameList(currentPage)
             val data = response.body()?.results ?: emptyList()
             val responseData = mutableListOf<Game>()
             responseData.addAll(data)
-
+            removeItemsForViewPager(responseData)
             LoadResult.Page(
                 data = responseData,
                 prevKey = if (currentPage == 1) null else -1,
@@ -32,6 +34,12 @@ class GamePagingSource(
             )
         } catch (e: Exception) {
             LoadResult.Error(e)
+        }
+    }
+
+    private fun removeItemsForViewPager(responseData: MutableList<Game>) {
+        for (i in 0..2) {
+            responseData.removeAt(0)
         }
     }
 }

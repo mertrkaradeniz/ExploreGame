@@ -1,13 +1,12 @@
 package com.mertrizakaradeniz.exploregame.ui.fragments.list
 
+import android.app.Application
 import android.content.Context
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.cachedIn
+import com.mertrizakaradeniz.exploregame.ExploreGameApplication
 import com.mertrizakaradeniz.exploregame.adapters.GamePagingSource
 import com.mertrizakaradeniz.exploregame.data.models.Game
 import com.mertrizakaradeniz.exploregame.data.models.GamesResponse
@@ -31,21 +30,65 @@ class GameListViewModel @Inject constructor(
     val gameList: LiveData<Resource<List<Game>>> = _gameList
 
     val listData = Pager(PagingConfig(pageSize = 1)) {
-        GamePagingSource(gameApi)
+        GamePagingSource(gameRepository)
     }.flow.cachedIn(viewModelScope)
 
-    fun fetchGameList(context: Context) = viewModelScope.launch {
-        safeFetchGameListCall(context)
+
+
+    fun getGameList(context: Context) = viewModelScope.launch {
+        safeGetGameListCall(context)
     }
 
-    private suspend fun safeFetchGameListCall(context: Context) {
+    /*
+        fun searchGame(context: Context, searchQuery: String) = viewModelScope.launch {
+            safeSearchGameCall(context, searchQuery)
+        }
+
+        private suspend fun safeSearchGameCall(context: Context, searchQuery: String) {
+            _gameList.postValue(Resource.Loading())
+            try {
+                if (Utils.hasInternetConnection(context)) {
+                    val response = gameRepository.searchGame(gameListPage, searchQuery)
+                    _gameList.postValue(handleSearchGameResponse(response))
+                } else {
+                    _gameList.postValue(Resource.Error("No internet connection"))
+                }
+            } catch (t: Throwable) {
+                when (t) {
+                    is IOException -> _gameList.postValue(Resource.Error("Network Failure"))
+                    else -> _gameList.postValue(Resource.Error("An error occurred, please try again"))
+                }
+            }
+        }
+
+        private fun handleSearchGameResponse(response: Response<GamesResponse>): Resource<GamesResponse> {
+            if (response.isSuccessful) {
+                response.body()?.let { resultResponse ->
+                    searchGamePage++
+                    if (searchGameResponse == null) {
+                        searchGameResponse = resultResponse
+                    } else {
+                        val oldGames = searchGameResponse?.results
+                        val newGames = resultResponse.results
+                        oldGames?.addAll(newGames)
+                    }
+                    return Resource.Success(searchGameResponse ?: resultResponse)
+                }
+            } else {
+                return Resource.Error(response.message())
+            }
+            return Resource.Error("An error occurred, please try again")
+        }
+    */
+
+    private suspend fun safeGetGameListCall(context: Context) {
         _gameList.postValue(Resource.Loading())
         try {
             if (Utils.hasInternetConnection(context)) {
-                val response = gameRepository.fetchGameList()
+                val response = gameRepository.getGameList(null)
                 _gameList.postValue(handleGameListResponse(response))
             } else {
-                _gameList.postValue(Resource.Error("No internet connection", emptyList()))
+                _gameList.postValue(Resource.Error("No internet connection"))
             }
         } catch (t: Throwable) {
             when (t) {
@@ -66,5 +109,15 @@ class GameListViewModel @Inject constructor(
         return Resource.Error("An error occurred, please try again")
     }
 
+
+    fun saveArticle(game: Game) = viewModelScope.launch {
+        gameRepository.upsert(game)
+    }
+
+    fun getSavedNews() = gameRepository.getSavedGames()
+
+    fun deleteArticle(game: Game) = viewModelScope.launch {
+        gameRepository.deleteGame(game)
+    }
 
 }

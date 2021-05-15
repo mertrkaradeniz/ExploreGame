@@ -1,23 +1,28 @@
 package com.mertrizakaradeniz.exploregame.ui.fragments.list
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AbsListView
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.paging.filter
+import androidx.paging.flatMap
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.mertrizakaradeniz.exploregame.R
+import com.mertrizakaradeniz.exploregame.adapters.GameListAdapter
 import com.mertrizakaradeniz.exploregame.adapters.GamePagedAdapter
 import com.mertrizakaradeniz.exploregame.adapters.ViewPagerAdapter
 import com.mertrizakaradeniz.exploregame.data.models.Game
 import com.mertrizakaradeniz.exploregame.databinding.FragmentGameListBinding
 import com.mertrizakaradeniz.exploregame.ui.main.MainActivity
+import com.mertrizakaradeniz.exploregame.utils.Constant.QUERY_PAGE_SIZE
 import com.mertrizakaradeniz.exploregame.utils.Resource
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
@@ -49,7 +54,7 @@ class GameListFragment : Fragment(R.layout.fragment_game_list) {
         setupRecyclerView()
         loadData()
 
-        viewModel.fetchGameList(requireContext())
+        viewModel.getGameList(requireContext())
     }
 
     private fun setupObservers() {
@@ -60,7 +65,6 @@ class GameListFragment : Fragment(R.layout.fragment_game_list) {
                     (requireActivity() as MainActivity).hideProgressBar()
                     gameListData = response.data!!
                     setupViewPager()
-                    //viewModel.insertCoinList(gameListData)
                 }
                 is Resource.Error -> {
                     (requireActivity() as MainActivity).hideProgressBar()
@@ -69,13 +73,8 @@ class GameListFragment : Fragment(R.layout.fragment_game_list) {
                         .setCancelable(false)
                         .setPositiveButton("Try Again") { dialog, _ ->
                             dialog.dismiss()
-                            viewModel.fetchGameList(requireContext())
+                            viewModel.getGameList(requireContext())
                         }.show()
-                    /*
-                    response.message?.let { message ->
-                        Toast.makeText(activity, "An Error occurred: $message", Toast.LENGTH_LONG).show()
-                    }
-                    */
                 }
                 is Resource.Loading -> {
                     (requireActivity() as MainActivity).showProgressBar()
