@@ -1,5 +1,6 @@
 package com.mertrizakaradeniz.exploregame.di
 
+import com.mertrizakaradeniz.exploregame.data.local.GameDao
 import com.mertrizakaradeniz.exploregame.data.local.GameDatabase
 import com.mertrizakaradeniz.exploregame.data.remote.GameApi
 import com.mertrizakaradeniz.exploregame.data.repository.GameRepository
@@ -17,6 +18,6 @@ object RepositoryModule {
     @Provides
     fun provideGameRepository(
         gameApi: GameApi,
-        database: GameDatabase
-    ): GameRepository = GameRepository(gameApi, database)
+        gameDao: GameDao
+    ): GameRepository = GameRepository(gameApi, gameDao)
 }

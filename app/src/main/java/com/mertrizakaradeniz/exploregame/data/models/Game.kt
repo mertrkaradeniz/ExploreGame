@@ -14,6 +14,7 @@ data class Game(
     @SerializedName("rating") val rating: Float,
     @SerializedName("metacritic") val metacritic: Int?,
     @SerializedName("description") val description: String?,
-    @SerializedName("background_image") val imageUrl: String?
+    @SerializedName("background_image") val imageUrl: String?,
+    @ColumnInfo(name = "is_fav") var isFavorite: Boolean = false
 ) : Serializable
 // TODO: 5/14/2021 change with parcelable

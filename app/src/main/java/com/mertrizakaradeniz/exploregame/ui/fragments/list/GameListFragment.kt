@@ -55,6 +55,7 @@ class GameListFragment : Fragment(R.layout.fragment_game_list) {
         loadData()
 
         viewModel.getGameList(requireContext())
+
     }
 
     private fun setupObservers() {

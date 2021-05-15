@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.viewModels
 import coil.load
+import com.google.android.material.snackbar.Snackbar
 import com.mertrizakaradeniz.exploregame.R
 import com.mertrizakaradeniz.exploregame.data.models.Game
 import com.mertrizakaradeniz.exploregame.databinding.FragmentGameDetailBinding
@@ -41,6 +42,12 @@ class GameDetailFragment : Fragment(R.layout.fragment_game_detail) {
         setupObservers()
 
         viewModel.fetchGameDetail(requireContext(), game.id.toString())
+
+        binding.fabAddFavourite.setOnClickListener {
+            game.isFavorite = true
+            viewModel.saveFavoriteGame(game)
+            Snackbar.make(view, "Game saved successfully", Snackbar.LENGTH_SHORT).show()
+        }
     }
 
     override fun onDestroyView() {

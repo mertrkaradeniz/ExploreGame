@@ -1,13 +1,13 @@
 package com.mertrizakaradeniz.exploregame.data.repository
 
-import com.mertrizakaradeniz.exploregame.data.local.GameDatabase
+import com.mertrizakaradeniz.exploregame.data.local.GameDao
 import com.mertrizakaradeniz.exploregame.data.models.Game
 import com.mertrizakaradeniz.exploregame.data.remote.GameApi
 import javax.inject.Inject
 
 class GameRepository @Inject constructor(
     private val gameApi: GameApi,
-    private val database: GameDatabase
+    private val gameDao: GameDao
 ) {
 
     suspend fun getGameList(pageNumber: Int?) = gameApi.getGameList(pageNumber ?: 1)
@@ -17,9 +17,20 @@ class GameRepository @Inject constructor(
 
     suspend fun getGameDetail(id: String) = gameApi.fetchGameDetail(id)
 
-    suspend fun upsert(game: Game) = database.getGameDao().upsert(game)
+    suspend fun upsert(game: Game) = gameDao.upsertGame(game)
 
-    fun getSavedGames() = database.getGameDao().getAllGames()
+    suspend fun addAllGames(list: List<Game>) = gameDao.addAllGames(list)
 
-    suspend fun deleteGame(game: Game) = database.getGameDao().deleteGame(game)
+    fun getAllGames() = gameDao.getAllGames()
+
+    fun getAllFavoriteGames() = gameDao.getAllFavoriteGames()
+
+    suspend fun searchGameById(id: Int) = gameDao.searchGameById(id)
+
+    //suspend fun searchByName(name: String) = gameDao.searchByName(name)
+
+    suspend fun deleteGame(game: Game) = gameDao.deleteGame(game)
+
+    suspend fun clearDatabase() = gameDao.clearDatabase()
+
 }

@@ -25,7 +25,7 @@
     </fragment>
     <fragment
         android:id="@+id/favouriteGameFragment"
-        android:name="com.mertrizakaradeniz.exploregame.ui.fragments.favourite.FavouriteGameFragment"
+        android:name="com.mertrizakaradeniz.exploregame.ui.fragments.favorite.FavoriteGameFragment"
         android:label="Favourite Games"
         tools:layout="@layout/fragment_favourite_game" >
         <action

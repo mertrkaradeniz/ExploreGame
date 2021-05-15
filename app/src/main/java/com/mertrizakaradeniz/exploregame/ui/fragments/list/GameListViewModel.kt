@@ -33,8 +33,6 @@ class GameListViewModel @Inject constructor(
         GamePagingSource(gameRepository)
     }.flow.cachedIn(viewModelScope)
 
-
-
     fun getGameList(context: Context) = viewModelScope.launch {
         safeGetGameListCall(context)
     }
@@ -107,17 +105,6 @@ class GameListViewModel @Inject constructor(
             return Resource.Error(response.message())
         }
         return Resource.Error("An error occurred, please try again")
-    }
-
-
-    fun saveArticle(game: Game) = viewModelScope.launch {
-        gameRepository.upsert(game)
-    }
-
-    fun getSavedNews() = gameRepository.getSavedGames()
-
-    fun deleteArticle(game: Game) = viewModelScope.launch {
-        gameRepository.deleteGame(game)
     }
 
 }

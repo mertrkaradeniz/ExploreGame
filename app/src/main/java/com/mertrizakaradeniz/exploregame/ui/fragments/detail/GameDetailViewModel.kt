@@ -25,7 +25,8 @@ class GameDetailViewModel @Inject constructor(
     private val _gameDetail: MutableLiveData<Resource<Game>> = MutableLiveData()
     val gameDetail: LiveData<Resource<Game>> = _gameDetail
 
-
+    private val _game: MutableLiveData<Game> = MutableLiveData()
+    val game: LiveData<Game> = _game
 
     fun fetchGameDetail(context: Context, id: String) = viewModelScope.launch {
         safeFetchGameDetailCall(context, id)
@@ -61,6 +62,14 @@ class GameDetailViewModel @Inject constructor(
             return Resource.Error(response.message())
         }
         return Resource.Error("An error occurred, please try again")
+    }
+
+    fun saveFavoriteGame(game: Game) = viewModelScope.launch {
+        gameRepository.upsert(game)
+    }
+
+    fun deleteFavoriteGame(game: Game) = viewModelScope.launch {
+        gameRepository.deleteGame(game)
     }
 
 }
