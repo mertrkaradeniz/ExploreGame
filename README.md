@@ -32,6 +32,10 @@ Clone or Download and Open it into Android Studio
 ```
     https://github.com/mertrkaradeniz/ExploreGame.git
 ```  
+Install .apk file
+```
+    https://github.com/mertrkaradeniz/ExploreGame/files/6490277/exploregame.zip
+``` 
 ## Demo
 
 [Youtube](https://youtu.be/2PdvUodTTsE)
