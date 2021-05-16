@@ -1,6 +1,11 @@
 package com.mertrizakaradeniz.exploregame.data.repository
 
 import androidx.lifecycle.LiveData
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingSource
+import androidx.paging.liveData
+import com.mertrizakaradeniz.exploregame.adapters.GamePagingSource
 import com.mertrizakaradeniz.exploregame.data.local.GameDao
 import com.mertrizakaradeniz.exploregame.data.models.Game
 import com.mertrizakaradeniz.exploregame.data.remote.GameApi
@@ -13,16 +18,23 @@ class GameRepository @Inject constructor(
 
     suspend fun getGameList(pageNumber: Int?) = gameApi.getGameList(pageNumber ?: 1)
 
-    suspend fun searchGame(pageNumber: Int, searchQuery: String) =
-        gameApi.getGameList(pageNumber, searchQuery)
+    fun getSearchResults(query: String) =
+        Pager(
+            config = PagingConfig(
+                pageSize = 20,
+                enablePlaceholders = false,
+                maxSize = 100
+            ),
+            pagingSourceFactory = { GamePagingSource(gameApi, query) }
+        ).liveData
 
-    suspend fun getGameDetail(id: String) = gameApi.fetchGameDetail(id)
+    suspend fun getGameDetail(id: String) = gameApi.getGameDetail(id)
 
     suspend fun upsert(game: Game) = gameDao.upsertGame(game)
 
     suspend fun addAllGames(list: List<Game>) = gameDao.addAllGames(list)
 
-    fun getAllGames() = gameDao.getAllGames()
+    //fun getAllGames() = gameDao.getAllGames()
 
     fun getAllFavoriteGames() = gameDao.getAllFavoriteGames()
 
@@ -39,5 +51,7 @@ class GameRepository @Inject constructor(
     fun searchDatabase(searchQuery: String): LiveData<List<Game>> {
         return gameDao.searchDatabase(searchQuery)
     }
+
+    fun getAllGameFromDatabase() = gameDao.getAllGame()
 
 }

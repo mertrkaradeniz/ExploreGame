@@ -2,6 +2,7 @@ package com.mertrizakaradeniz.exploregame.ui.fragments.favorite
 
 import android.app.AlertDialog
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.appcompat.widget.SearchView
@@ -37,9 +38,9 @@ class FavoriteGameFragment : Fragment(R.layout.fragment_favourite_game),
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setupObservers()
         setHasOptionsMenu(true)
         setupRecyclerView()
-        setupObservers()
         handleClickEvent()
         setupItemTouchEvent()
     }
@@ -67,12 +68,12 @@ class FavoriteGameFragment : Fragment(R.layout.fragment_favourite_game),
         binding.rvFavoriteGame.apply {
             adapter = favoriteGamesAdapter
             layoutManager = LinearLayoutManager(activity)
-            setHasFixedSize(true)
         }
     }
 
     private fun setupObservers() {
         viewModel.getAllFavoriteGames().observe(viewLifecycleOwner, { favoriteGames ->
+            Log.d("FavoriteGameFragment", favoriteGames.toString())
             favoriteGamesAdapter.differ.submitList(favoriteGames)
         })
     }
@@ -153,7 +154,7 @@ class FavoriteGameFragment : Fragment(R.layout.fragment_favourite_game),
         val searchQuery = "%$query%"
         viewModel.searchDatabase(searchQuery).observe(this) { list ->
             list?.let {
-                favoriteGamesAdapter.differ.submitList(list)
+                //favoriteGamesAdapter.differ.submitList(list)
             }
         }
     }

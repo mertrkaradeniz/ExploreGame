@@ -1,34 +1,32 @@
 package com.mertrizakaradeniz.exploregame.ui.fragments.list
 
+import android.opengl.Visibility
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AbsListView
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.widget.SearchView
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import androidx.paging.filter
-import androidx.paging.flatMap
+import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.mertrizakaradeniz.exploregame.R
-import com.mertrizakaradeniz.exploregame.adapters.GameListAdapter
-import com.mertrizakaradeniz.exploregame.adapters.GamePagedAdapter
+import com.mertrizakaradeniz.exploregame.adapters.GameLoadStateAdapter
+import com.mertrizakaradeniz.exploregame.adapters.GamePagingAdapter
 import com.mertrizakaradeniz.exploregame.adapters.ViewPagerAdapter
 import com.mertrizakaradeniz.exploregame.data.models.Game
 import com.mertrizakaradeniz.exploregame.databinding.FragmentGameListBinding
 import com.mertrizakaradeniz.exploregame.ui.main.MainActivity
-import com.mertrizakaradeniz.exploregame.utils.Constant.QUERY_PAGE_SIZE
+import com.mertrizakaradeniz.exploregame.utils.Constant.DEFAULT_SEARCH_QUERY
+import com.mertrizakaradeniz.exploregame.utils.Constant.MIN_QUERY_SEARCH_LENGTH
 import com.mertrizakaradeniz.exploregame.utils.Constant.VIEW_PAGER_ITEM_SIZE
+import com.mertrizakaradeniz.exploregame.utils.Data.gameList
 import com.mertrizakaradeniz.exploregame.utils.Resource
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class GameListFragment : Fragment(R.layout.fragment_game_list) {
@@ -36,9 +34,10 @@ class GameListFragment : Fragment(R.layout.fragment_game_list) {
     private var _binding: FragmentGameListBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var gameListAdapter: GamePagedAdapter
+    private lateinit var gameListAdapter: GamePagingAdapter
     private lateinit var viewPagerAdapter: ViewPagerAdapter
     private lateinit var gameListData: List<Game>
+
     private val viewModel: GameListViewModel by viewModels()
 
     override fun onCreateView(
@@ -53,10 +52,59 @@ class GameListFragment : Fragment(R.layout.fragment_game_list) {
         super.onViewCreated(view, savedInstanceState)
         super.onViewCreated(view, savedInstanceState)
         setupObservers()
+        viewModel.games.observe(viewLifecycleOwner) {
+            gameListAdapter.submitData(viewLifecycleOwner.lifecycle, it)
+        }
         setupRecyclerView()
-        loadData()
-
+        handleClickEvent()
+        setupSearch()
+        gameListAdapter.addLoadStateListener { loadState ->
+            binding.apply {
+                rvGameList.isVisible = loadState.source.refresh is LoadState.NotLoading
+            }
+        }
+        //loadData()
         viewModel.getGameList(requireContext())
+    }
+
+    private fun setupSearch() {
+        binding.searchView.apply {
+            setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                override fun onQueryTextSubmit(query: String?): Boolean {
+                    clearFocus()
+                    return false
+                }
+
+                override fun onQueryTextChange(query: String?): Boolean {
+                    if (query != null) {
+                        if (query.length >= MIN_QUERY_SEARCH_LENGTH) {
+                            hideViewPager()
+                            viewModel.searchGames(query)
+                        }
+                        if (query.length < 3) {
+                            showViewPager()
+                            binding.rvGameList.scrollToPosition(0)
+                            viewModel.searchGames(DEFAULT_SEARCH_QUERY)
+                        }
+                    }
+                    return true
+                }
+            })
+        }
+    }
+
+    private fun hideViewPager() {
+        binding.apply {
+            viewPager.visibility = View.GONE
+            dotsIndicator.visibility = View.GONE
+        }
+    }
+
+    private fun showViewPager() {
+        binding.apply {
+            viewPager.visibility = View.VISIBLE
+            dotsIndicator.visibility = View.VISIBLE
+        }
     }
 
     private fun setupObservers() {
@@ -65,7 +113,7 @@ class GameListFragment : Fragment(R.layout.fragment_game_list) {
             when (response) {
                 is Resource.Success -> {
                     (requireActivity() as MainActivity).hideProgressBar()
-                    gameListData = response.data!!
+                    gameList = response.data!!.subList(0, VIEW_PAGER_ITEM_SIZE)
                     setupViewPager()
                 }
                 is Resource.Error -> {
@@ -87,7 +135,7 @@ class GameListFragment : Fragment(R.layout.fragment_game_list) {
 
     private fun setupViewPager() {
 
-        viewPagerAdapter = ViewPagerAdapter(gameListData.subList(0,VIEW_PAGER_ITEM_SIZE))
+        viewPagerAdapter = ViewPagerAdapter(gameList)
         binding.viewPager.apply {
             adapter = viewPagerAdapter
             orientation = ViewPager2.ORIENTATION_HORIZONTAL
@@ -101,21 +149,34 @@ class GameListFragment : Fragment(R.layout.fragment_game_list) {
         binding.dotsIndicator.setViewPager2(binding.viewPager)
     }
 
-    private fun loadData() {
+    /*private fun loadData() {
+        //Load From Network
         lifecycleScope.launch {
             viewModel.listData.collect { pagingData ->
                 gameListAdapter.submitData(pagingData)
             }
         }
-    }
+        //Load From Database
+        /*lifecycleScope.launch {
+            viewModel.listDataDB.collectLatest {
+                gameListAdapter.submitData(it)
+            }
+        }*/
+    }*/
 
     private fun setupRecyclerView() {
-        gameListAdapter = GamePagedAdapter()
+        gameListAdapter = GamePagingAdapter()
         binding.rvGameList.apply {
-            adapter = gameListAdapter
+            adapter = gameListAdapter.withLoadStateHeaderAndFooter(
+                header = GameLoadStateAdapter { gameListAdapter.retry() },
+                footer = GameLoadStateAdapter { gameListAdapter.retry() }
+            )
             layoutManager = LinearLayoutManager(activity)
             setHasFixedSize(true)
         }
+    }
+
+    private fun handleClickEvent() {
         gameListAdapter.setOnItemClickListener { game ->
             val bundle = Bundle().apply {
                 putSerializable("game", game)

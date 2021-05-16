@@ -1,6 +1,5 @@
 package com.mertrizakaradeniz.exploregame.adapters
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
@@ -10,7 +9,7 @@ import coil.load
 import com.mertrizakaradeniz.exploregame.data.models.Game
 import com.mertrizakaradeniz.exploregame.databinding.GameItemBinding
 
-class GamePagedAdapter : PagingDataAdapter<Game, GamePagedAdapter.ViewHolder>(diffCallback) {
+class GamePagingAdapter : PagingDataAdapter<Game, GamePagingAdapter.ViewHolder>(diffCallback) {
 
     inner class ViewHolder(val binding: GameItemBinding) :
         RecyclerView.ViewHolder(binding.root)
