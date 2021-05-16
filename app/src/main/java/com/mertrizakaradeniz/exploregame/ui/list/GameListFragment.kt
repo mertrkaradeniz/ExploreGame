@@ -1,6 +1,5 @@
 package com.mertrizakaradeniz.exploregame.ui.list
 
-import android.opengl.Visibility
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -8,10 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.SearchView
-import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -19,7 +16,6 @@ import com.mertrizakaradeniz.exploregame.R
 import com.mertrizakaradeniz.exploregame.adapters.GameLoadStateAdapter
 import com.mertrizakaradeniz.exploregame.adapters.GamePagingAdapter
 import com.mertrizakaradeniz.exploregame.adapters.ViewPagerAdapter
-import com.mertrizakaradeniz.exploregame.data.models.Game
 import com.mertrizakaradeniz.exploregame.databinding.FragmentGameListBinding
 import com.mertrizakaradeniz.exploregame.ui.main.MainActivity
 import com.mertrizakaradeniz.exploregame.utils.Constant
@@ -28,7 +24,6 @@ import com.mertrizakaradeniz.exploregame.utils.Constant.MIN_QUERY_SEARCH_LENGTH
 import com.mertrizakaradeniz.exploregame.utils.Constant.VIEW_PAGER_ITEM_SIZE
 import com.mertrizakaradeniz.exploregame.utils.Data.gameList
 import com.mertrizakaradeniz.exploregame.utils.Resource
-import com.mertrizakaradeniz.exploregame.utils.Utils
 import com.mertrizakaradeniz.exploregame.utils.Utils.Companion.logEvent
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -36,18 +31,14 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class GameListFragment : Fragment(R.layout.fragment_game_list) {
 
-    private var _binding: FragmentGameListBinding? = null
-    private val binding get() = _binding!!
-
     @Inject
     lateinit var firebaseInstance: FirebaseAnalytics
-    private val TAG = "GameListFragment"
-
-    private lateinit var gameListAdapter: GamePagingAdapter
-    private lateinit var viewPagerAdapter: ViewPagerAdapter
-    private lateinit var gameListData: List<Game>
 
     private val viewModel: GameListViewModel by viewModels()
+    private var _binding: FragmentGameListBinding? = null
+    private val binding get() = _binding!!
+    private val gameListAdapter by lazy { GamePagingAdapter() }
+    private lateinit var viewPagerAdapter: ViewPagerAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -61,19 +52,18 @@ class GameListFragment : Fragment(R.layout.fragment_game_list) {
         super.onViewCreated(view, savedInstanceState)
         super.onViewCreated(view, savedInstanceState)
         setupObservers()
-        viewModel.games.observe(viewLifecycleOwner) {
-            gameListAdapter.submitData(viewLifecycleOwner.lifecycle, it)
-        }
         setupRecyclerView()
         handleClickEvent()
         setupSearch()
-        gameListAdapter.addLoadStateListener { loadState ->
-            binding.apply {
-                rvGameList.isVisible = loadState.source.refresh is LoadState.NotLoading
-            }
-        }
-        viewModel.getGameList(requireContext())
+        sendEvent()
+    }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+    private fun sendEvent() {
         val bundle = Bundle().apply {
             putString(Constant.VIEW_NAME, TAG)
         }
@@ -121,6 +111,11 @@ class GameListFragment : Fragment(R.layout.fragment_game_list) {
     }
 
     private fun setupObservers() {
+        viewModel.getGameList(requireContext())
+
+        viewModel.games.observe(viewLifecycleOwner) {
+            gameListAdapter.submitData(viewLifecycleOwner.lifecycle, it)
+        }
 
         viewModel.gameList.observe(viewLifecycleOwner, { response ->
             when (response) {
@@ -147,38 +142,25 @@ class GameListFragment : Fragment(R.layout.fragment_game_list) {
     }
 
     private fun setupViewPager() {
-
         viewPagerAdapter = ViewPagerAdapter(gameList)
         binding.viewPager.apply {
             adapter = viewPagerAdapter
             orientation = ViewPager2.ORIENTATION_HORIZONTAL
         }
-        viewPagerAdapter.setOnItemClickListener { game ->
-            val bundle = Bundle().apply {
-                putSerializable("game", game)
-            }
-            findNavController().navigate(R.id.action_gameListFragment_to_gameDetailFragment, bundle)
-        }
+        viewPagerClickEvent()
         binding.dotsIndicator.setViewPager2(binding.viewPager)
     }
 
-    /*private fun loadData() {
-        //Load From Network
-        lifecycleScope.launch {
-            viewModel.listData.collect { pagingData ->
-                gameListAdapter.submitData(pagingData)
+    private fun viewPagerClickEvent() {
+        viewPagerAdapter.setOnItemClickListener { game ->
+            val bundle = Bundle().apply {
+                putParcelable("game", game)
             }
+            findNavController().navigate(R.id.action_gameListFragment_to_gameDetailFragment, bundle)
         }
-        //Load From Database
-        /*lifecycleScope.launch {
-            viewModel.listDataDB.collectLatest {
-                gameListAdapter.submitData(it)
-            }
-        }*/
-    }*/
+    }
 
     private fun setupRecyclerView() {
-        gameListAdapter = GamePagingAdapter()
         binding.rvGameList.apply {
             adapter = gameListAdapter.withLoadStateHeaderAndFooter(
                 header = GameLoadStateAdapter { gameListAdapter.retry() },
@@ -192,14 +174,13 @@ class GameListFragment : Fragment(R.layout.fragment_game_list) {
     private fun handleClickEvent() {
         gameListAdapter.setOnItemClickListener { game ->
             val bundle = Bundle().apply {
-                putSerializable("game", game)
+                putParcelable("game", game)
             }
             findNavController().navigate(R.id.action_gameListFragment_to_gameDetailFragment, bundle)
         }
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+    companion object {
+        private const val TAG = "GameListFragment"
     }
 }

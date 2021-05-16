@@ -2,16 +2,17 @@ package com.mertrizakaradeniz.exploregame.adapters
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import com.mertrizakaradeniz.exploregame.data.local.GameDao
 import com.mertrizakaradeniz.exploregame.data.models.Game
 import com.mertrizakaradeniz.exploregame.data.remote.GameApi
 import com.mertrizakaradeniz.exploregame.utils.Constant.STARTING_PAGE_INDEX
-import com.mertrizakaradeniz.exploregame.utils.Constant.VIEW_PAGER_ITEM_SIZE
 import com.mertrizakaradeniz.exploregame.utils.Data.gameList
 import retrofit2.HttpException
 import java.io.IOException
 
 
 class GamePagingSource(
+    private val gameDao: GameDao,
     private val gameApi: GameApi,
     private val query: String
 ) : PagingSource<Int, Game>() {
@@ -28,7 +29,7 @@ class GamePagingSource(
             val games = response.body()?.results ?: emptyList()
             val gameData = mutableListOf<Game>()
             gameData.addAll(games)
-            //repository.addAllGames(responseData) //Save all loaded games in database*/
+            //gameDao.addAllGames(gameData) //Save all loaded games in database*/
             if (gameList.isNotEmpty()) {
                 gameList.forEach { game ->
                     gameData.removeIf {

@@ -15,5 +15,7 @@ object Constant {
     const val REMOVE_GAME_EVENT: String = "remove_game"
     const val ENTERED_VIEW_EVENT: String = "entered"
     const val VIEW_NAME: String = "view_name"
+    const val GAME_KEY: String = "game"
+
 
 }

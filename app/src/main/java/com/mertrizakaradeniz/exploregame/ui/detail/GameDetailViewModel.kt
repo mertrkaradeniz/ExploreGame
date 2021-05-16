@@ -6,11 +6,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mertrizakaradeniz.exploregame.data.models.Game
-import com.mertrizakaradeniz.exploregame.data.models.GamesResponse
 import com.mertrizakaradeniz.exploregame.data.repository.GameRepository
 import com.mertrizakaradeniz.exploregame.utils.Resource
 import com.mertrizakaradeniz.exploregame.utils.Utils
-import dagger.hilt.android.HiltAndroidApp
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import retrofit2.Response
@@ -66,10 +64,6 @@ class GameDetailViewModel @Inject constructor(
 
     fun saveFavoriteGame(game: Game) = viewModelScope.launch {
         gameRepository.upsert(game)
-    }
-
-    fun deleteFavoriteGame(game: Game) = viewModelScope.launch {
-        gameRepository.deleteGame(game)
     }
 
     fun checkGameIsFavorite(id: Int) = gameRepository.checkGameIsFavorite(id)

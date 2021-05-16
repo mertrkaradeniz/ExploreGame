@@ -1,6 +1,5 @@
 package com.mertrizakaradeniz.exploregame.ui.favorite
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mertrizakaradeniz.exploregame.data.models.Game

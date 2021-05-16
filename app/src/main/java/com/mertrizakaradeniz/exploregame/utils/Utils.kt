@@ -10,9 +10,7 @@ import android.view.inputmethod.InputMethodManager
 import com.google.firebase.analytics.FirebaseAnalytics
 
 class Utils {
-
     companion object {
-
         fun hasInternetConnection(context: Context): Boolean {
             val connectivityManager =
                 context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -54,7 +52,5 @@ class Utils {
         fun logEvent(firebaseInstance: FirebaseAnalytics, eventName: String, bundle: Bundle) {
             firebaseInstance.logEvent(eventName, bundle)
         }
-
     }
-
 }

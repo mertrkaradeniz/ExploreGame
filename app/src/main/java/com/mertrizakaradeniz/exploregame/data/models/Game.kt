@@ -1,11 +1,13 @@
 package com.mertrizakaradeniz.exploregame.data.models
 
+import android.os.Parcelable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
-import java.io.Serializable
+import kotlinx.parcelize.Parcelize
 
+@Parcelize
 @Entity(tableName = "games")
 data class Game(
     @PrimaryKey @SerializedName("id") val id: Int,
@@ -16,5 +18,4 @@ data class Game(
     @SerializedName("description") val description: String?,
     @SerializedName("background_image") val imageUrl: String?,
     @ColumnInfo(name = "is_fav") var isFavorite: Boolean = false
-) : Serializable
-// TODO: 5/14/2021 change with parcelable
+) : Parcelable

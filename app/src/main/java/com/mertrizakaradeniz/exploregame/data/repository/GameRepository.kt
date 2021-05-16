@@ -1,6 +1,5 @@
 package com.mertrizakaradeniz.exploregame.data.repository
 
-import androidx.lifecycle.LiveData
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.liveData
@@ -24,7 +23,7 @@ class GameRepository @Inject constructor(
                 enablePlaceholders = false,
                 maxSize = 100
             ),
-            pagingSourceFactory = { GamePagingSource(gameApi, query) }
+            pagingSourceFactory = { GamePagingSource(gameDao, gameApi, query) }
         ).liveData
 
     suspend fun getGameDetail(id: String) = gameApi.getGameDetail(id)
@@ -33,21 +32,15 @@ class GameRepository @Inject constructor(
 
     suspend fun addAllGames(list: List<Game>) = gameDao.addAllGames(list)
 
-    //fun getAllGames() = gameDao.getAllGames()
+    fun getAllGames() = gameDao.getAllGames()
 
     fun getAllFavoriteGames() = gameDao.getAllFavoriteGames()
-
-    suspend fun searchGameById(id: Int) = gameDao.searchGameById(id)
-
-    //suspend fun searchByName(name: String) = gameDao.searchByName(name)
 
     suspend fun deleteGame(game: Game) = gameDao.deleteGame(game)
 
     suspend fun clearDatabase() = gameDao.clearDatabase()
 
     suspend fun deleteAll() = gameDao.deleteAll()
-
-    fun getAllGameFromDatabase() = gameDao.getAllGame()
 
     fun searchFavoriteGames(searchQuery: String) = gameDao.searchFavoriteGames(searchQuery)
 

@@ -4,5 +4,4 @@ import android.app.Application
 import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp
-class ExploreGameApplication : Application() {
-}
+class ExploreGameApplication : Application()

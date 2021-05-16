@@ -17,6 +17,7 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.mertrizakaradeniz.exploregame.R
 import com.mertrizakaradeniz.exploregame.adapters.GameListAdapter
 import com.mertrizakaradeniz.exploregame.databinding.FragmentFavouriteGameBinding
+import com.mertrizakaradeniz.exploregame.ui.main.MainActivity
 import com.mertrizakaradeniz.exploregame.utils.Constant
 import com.mertrizakaradeniz.exploregame.utils.Constant.REMOVE_GAME_EVENT
 import com.mertrizakaradeniz.exploregame.utils.Utils.Companion.logEvent
@@ -29,13 +30,11 @@ class FavoriteGameFragment : Fragment(R.layout.fragment_favourite_game),
 
     @Inject
     lateinit var firebaseInstance: FirebaseAnalytics
-    private val TAG = "FavoriteGameFragment"
 
+    private val viewModel: FavoriteGameViewModel by viewModels()
     private var _binding: FragmentFavouriteGameBinding? = null
     private val binding get() = _binding!!
-
     private val favoriteGamesAdapter by lazy { GameListAdapter() }
-    private val viewModel: FavoriteGameViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -47,22 +46,20 @@ class FavoriteGameFragment : Fragment(R.layout.fragment_favourite_game),
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        (requireActivity() as MainActivity).hideProgressBar()
         setHasOptionsMenu(true)
         setupObservers()
         setupRecyclerView()
         handleClickEvent()
         setupItemTouchEvent()
-        val bundle = Bundle().apply {
-            putString(Constant.VIEW_NAME, TAG)
-        }
-        logEvent(firebaseInstance, Constant.ENTERED_VIEW_EVENT, bundle)
+        sendEvent()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.favorite_menu, menu)
         val search = menu.findItem(R.id.menu_search)
         val searchView = search.actionView as? SearchView
-        searchView?.maxWidth= Integer.MAX_VALUE
+        searchView?.maxWidth = Integer.MAX_VALUE
         searchView?.setOnQueryTextListener(this)
     }
 
@@ -76,6 +73,13 @@ class FavoriteGameFragment : Fragment(R.layout.fragment_favourite_game),
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun sendEvent() {
+        val bundle = Bundle().apply {
+            putString(Constant.VIEW_NAME, TAG)
+        }
+        logEvent(firebaseInstance, Constant.ENTERED_VIEW_EVENT, bundle)
     }
 
     private fun setupRecyclerView() {
@@ -95,7 +99,7 @@ class FavoriteGameFragment : Fragment(R.layout.fragment_favourite_game),
     private fun handleClickEvent() {
         favoriteGamesAdapter.setOnItemClickListener { game ->
             val bundle = Bundle().apply {
-                putSerializable("game", game)
+                putParcelable("game", game)
             }
             findNavController().navigate(
                 R.id.action_favouriteGameFragment_to_gameDetailFragment, bundle
@@ -128,7 +132,7 @@ class FavoriteGameFragment : Fragment(R.layout.fragment_favourite_game),
                         show()
                     }
                 val bundle = Bundle().apply {
-                    putSerializable("game", game)
+                    putParcelable("game", game)
                 }
                 logEvent(firebaseInstance, REMOVE_GAME_EVENT, bundle)
             }
@@ -175,6 +179,10 @@ class FavoriteGameFragment : Fragment(R.layout.fragment_favourite_game),
                 favoriteGamesAdapter.differ.submitList(list)
             }
         }
+    }
+
+    companion object {
+        private const val TAG = "FavoriteGameFragment"
     }
 
 }
