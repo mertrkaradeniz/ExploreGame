@@ -1,12 +1,10 @@
 package com.mertrizakaradeniz.exploregame.adapters
 
-import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.mertrizakaradeniz.exploregame.data.local.GameDatabase
 import com.mertrizakaradeniz.exploregame.data.models.Game
-import com.mertrizakaradeniz.exploregame.data.remote.GameApi
 import com.mertrizakaradeniz.exploregame.data.repository.GameRepository
+import com.mertrizakaradeniz.exploregame.utils.Constant.VIEW_PAGER_ITEM_SIZE
 import java.lang.Exception
 
 
@@ -38,7 +36,7 @@ class GamePagingSource(
     }
 
     private fun removeItemsForViewPager(responseData: MutableList<Game>) {
-        for (i in 0..2) {
+        for (i in 0 until VIEW_PAGER_ITEM_SIZE) {
             responseData.removeAt(0)
         }
     }

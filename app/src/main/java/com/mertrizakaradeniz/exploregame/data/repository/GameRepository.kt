@@ -1,5 +1,6 @@
 package com.mertrizakaradeniz.exploregame.data.repository
 
+import androidx.lifecycle.LiveData
 import com.mertrizakaradeniz.exploregame.data.local.GameDao
 import com.mertrizakaradeniz.exploregame.data.models.Game
 import com.mertrizakaradeniz.exploregame.data.remote.GameApi
@@ -32,5 +33,11 @@ class GameRepository @Inject constructor(
     suspend fun deleteGame(game: Game) = gameDao.deleteGame(game)
 
     suspend fun clearDatabase() = gameDao.clearDatabase()
+
+    suspend fun deleteAll() = gameDao.deleteAll()
+
+    fun searchDatabase(searchQuery: String): LiveData<List<Game>> {
+        return gameDao.searchDatabase(searchQuery)
+    }
 
 }

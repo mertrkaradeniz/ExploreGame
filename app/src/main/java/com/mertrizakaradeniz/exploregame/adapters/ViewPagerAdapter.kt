@@ -46,5 +46,5 @@ class ViewPagerAdapter(private val gameList: List<Game>) :
         onItemClickListener = listener
     }
 
-    override fun getItemCount() = 3
+    override fun getItemCount() = gameList.size
 }

@@ -7,6 +7,7 @@ object Constant {
     const val QUERY_PAGE_SIZE: Int = 20
     const val DEFAULT_SEARCH_QUERY: String = ""
     const val DATABASE_NAME: String = "Game.db"
+    const val VIEW_PAGER_ITEM_SIZE: Int = 3
 
     const val DATE_TIME: String = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
 }

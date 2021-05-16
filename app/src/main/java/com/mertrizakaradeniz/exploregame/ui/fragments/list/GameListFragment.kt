@@ -1,6 +1,7 @@
 package com.mertrizakaradeniz.exploregame.ui.fragments.list
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -23,6 +24,7 @@ import com.mertrizakaradeniz.exploregame.data.models.Game
 import com.mertrizakaradeniz.exploregame.databinding.FragmentGameListBinding
 import com.mertrizakaradeniz.exploregame.ui.main.MainActivity
 import com.mertrizakaradeniz.exploregame.utils.Constant.QUERY_PAGE_SIZE
+import com.mertrizakaradeniz.exploregame.utils.Constant.VIEW_PAGER_ITEM_SIZE
 import com.mertrizakaradeniz.exploregame.utils.Resource
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
@@ -55,7 +57,6 @@ class GameListFragment : Fragment(R.layout.fragment_game_list) {
         loadData()
 
         viewModel.getGameList(requireContext())
-
     }
 
     private fun setupObservers() {
@@ -85,7 +86,8 @@ class GameListFragment : Fragment(R.layout.fragment_game_list) {
     }
 
     private fun setupViewPager() {
-        viewPagerAdapter = ViewPagerAdapter(gameListData)
+
+        viewPagerAdapter = ViewPagerAdapter(gameListData.subList(0,VIEW_PAGER_ITEM_SIZE))
         binding.viewPager.apply {
             adapter = viewPagerAdapter
             orientation = ViewPager2.ORIENTATION_HORIZONTAL

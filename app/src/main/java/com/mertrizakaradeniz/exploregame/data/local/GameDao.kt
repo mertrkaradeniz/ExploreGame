@@ -17,8 +17,8 @@ interface GameDao {
     @Query("SELECT * FROM games ORDER BY name DESC")
     fun getAllGames(): LiveData<List<Game>>
 
-    @Query("SELECT * FROM games ORDER BY name")
-    fun getAllFavoriteGames(): LiveData<List<Game>>
+    @Query("SELECT * FROM games WHERE is_fav = :isFav ORDER BY name")
+    fun getAllFavoriteGames(isFav: Boolean = true): LiveData<List<Game>>
 
     @Query("SELECT * FROM games WHERE id = :id")
     suspend fun searchGameById(id: Int): Game
@@ -29,7 +29,13 @@ interface GameDao {
     @Delete
     suspend fun deleteGame(game: Game)
 
+    @Query("DELETE FROM games WHERE is_fav = :isFav")
+    suspend fun deleteAll(isFav: Boolean = true)
+
     @Query("DELETE FROM games WHERE is_fav = 'false'")
     suspend fun clearDatabase()
+
+    @Query("SELECT * FROM games WHERE name LIKE :searchQuery")
+    fun searchDatabase(searchQuery: String): LiveData<List<Game>>
 
 }

@@ -1,17 +1,14 @@
 package com.mertrizakaradeniz.exploregame.ui.fragments.list
 
-import android.app.Application
 import android.content.Context
 import androidx.lifecycle.*
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
-import androidx.paging.cachedIn
-import com.mertrizakaradeniz.exploregame.ExploreGameApplication
+import androidx.paging.*
 import com.mertrizakaradeniz.exploregame.adapters.GamePagingSource
 import com.mertrizakaradeniz.exploregame.data.models.Game
 import com.mertrizakaradeniz.exploregame.data.models.GamesResponse
 import com.mertrizakaradeniz.exploregame.data.remote.GameApi
 import com.mertrizakaradeniz.exploregame.data.repository.GameRepository
+import com.mertrizakaradeniz.exploregame.utils.Constant.QUERY_PAGE_SIZE
 import com.mertrizakaradeniz.exploregame.utils.Resource
 import com.mertrizakaradeniz.exploregame.utils.Utils
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,14 +20,14 @@ import javax.inject.Inject
 @HiltViewModel
 class GameListViewModel @Inject constructor(
     private val gameApi: GameApi,
-    private val gameRepository: GameRepository
+    private val repository: GameRepository
 ) : ViewModel() {
 
     private val _gameList: MutableLiveData<Resource<List<Game>>> = MutableLiveData()
     val gameList: LiveData<Resource<List<Game>>> = _gameList
 
-    val listData = Pager(PagingConfig(pageSize = 1)) {
-        GamePagingSource(gameRepository)
+    val listData = Pager(PagingConfig(pageSize = QUERY_PAGE_SIZE)) {
+        GamePagingSource(repository)
     }.flow.cachedIn(viewModelScope)
 
     fun getGameList(context: Context) = viewModelScope.launch {
@@ -83,7 +80,7 @@ class GameListViewModel @Inject constructor(
         _gameList.postValue(Resource.Loading())
         try {
             if (Utils.hasInternetConnection(context)) {
-                val response = gameRepository.getGameList(null)
+                val response = repository.getGameList(null)
                 _gameList.postValue(handleGameListResponse(response))
             } else {
                 _gameList.postValue(Resource.Error("No internet connection"))
