@@ -1,4 +1,4 @@
-package com.mertrizakaradeniz.exploregame.ui.fragments.favorite
+package com.mertrizakaradeniz.exploregame.ui.favorite
 
 import android.app.AlertDialog
 import android.os.Bundle
@@ -13,14 +13,23 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.mertrizakaradeniz.exploregame.R
 import com.mertrizakaradeniz.exploregame.adapters.GameListAdapter
 import com.mertrizakaradeniz.exploregame.databinding.FragmentFavouriteGameBinding
+import com.mertrizakaradeniz.exploregame.utils.Constant
+import com.mertrizakaradeniz.exploregame.utils.Constant.REMOVE_GAME_EVENT
+import com.mertrizakaradeniz.exploregame.utils.Utils.Companion.logEvent
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class FavoriteGameFragment : Fragment(R.layout.fragment_favourite_game),
     SearchView.OnQueryTextListener {
+
+    @Inject
+    lateinit var firebaseInstance: FirebaseAnalytics
+    private val TAG = "FavoriteGameFragment"
 
     private var _binding: FragmentFavouriteGameBinding? = null
     private val binding get() = _binding!!
@@ -43,6 +52,10 @@ class FavoriteGameFragment : Fragment(R.layout.fragment_favourite_game),
         setupRecyclerView()
         handleClickEvent()
         setupItemTouchEvent()
+        val bundle = Bundle().apply {
+            putString(Constant.VIEW_NAME, TAG)
+        }
+        logEvent(firebaseInstance, Constant.ENTERED_VIEW_EVENT, bundle)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -51,7 +64,6 @@ class FavoriteGameFragment : Fragment(R.layout.fragment_favourite_game),
         val searchView = search.actionView as? SearchView
         searchView?.maxWidth= Integer.MAX_VALUE
         searchView?.setOnQueryTextListener(this)
-
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -115,6 +127,10 @@ class FavoriteGameFragment : Fragment(R.layout.fragment_favourite_game),
                         }
                         show()
                     }
+                val bundle = Bundle().apply {
+                    putSerializable("game", game)
+                }
+                logEvent(firebaseInstance, REMOVE_GAME_EVENT, bundle)
             }
         }
         ItemTouchHelper(itemTouchHelperCallback).apply {

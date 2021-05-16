@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "550835275688",
+    "project_id": "exploregame-18370",
+    "storage_bucket": "exploregame-18370.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:550835275688:android:871eb4d02531afe3f67f9d",
+        "android_client_info": {
+          "package_name": "com.mertrizakaradeniz.exploregame"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "550835275688-0i5qpqc75fpa613srktqvp32ronfg0lv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBlyEGh3UqThMD5Dr7YUtQgowyHmt1jFGM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "550835275688-0i5qpqc75fpa613srktqvp32ronfg0lv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

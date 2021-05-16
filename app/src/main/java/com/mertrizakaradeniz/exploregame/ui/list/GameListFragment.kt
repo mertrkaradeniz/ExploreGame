@@ -1,4 +1,4 @@
-package com.mertrizakaradeniz.exploregame.ui.fragments.list
+package com.mertrizakaradeniz.exploregame.ui.list
 
 import android.opengl.Visibility
 import android.os.Bundle
@@ -14,6 +14,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.mertrizakaradeniz.exploregame.R
 import com.mertrizakaradeniz.exploregame.adapters.GameLoadStateAdapter
 import com.mertrizakaradeniz.exploregame.adapters.GamePagingAdapter
@@ -21,18 +22,26 @@ import com.mertrizakaradeniz.exploregame.adapters.ViewPagerAdapter
 import com.mertrizakaradeniz.exploregame.data.models.Game
 import com.mertrizakaradeniz.exploregame.databinding.FragmentGameListBinding
 import com.mertrizakaradeniz.exploregame.ui.main.MainActivity
+import com.mertrizakaradeniz.exploregame.utils.Constant
 import com.mertrizakaradeniz.exploregame.utils.Constant.DEFAULT_SEARCH_QUERY
 import com.mertrizakaradeniz.exploregame.utils.Constant.MIN_QUERY_SEARCH_LENGTH
 import com.mertrizakaradeniz.exploregame.utils.Constant.VIEW_PAGER_ITEM_SIZE
 import com.mertrizakaradeniz.exploregame.utils.Data.gameList
 import com.mertrizakaradeniz.exploregame.utils.Resource
+import com.mertrizakaradeniz.exploregame.utils.Utils
+import com.mertrizakaradeniz.exploregame.utils.Utils.Companion.logEvent
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class GameListFragment : Fragment(R.layout.fragment_game_list) {
 
     private var _binding: FragmentGameListBinding? = null
     private val binding get() = _binding!!
+
+    @Inject
+    lateinit var firebaseInstance: FirebaseAnalytics
+    private val TAG = "GameListFragment"
 
     private lateinit var gameListAdapter: GamePagingAdapter
     private lateinit var viewPagerAdapter: ViewPagerAdapter
@@ -63,8 +72,12 @@ class GameListFragment : Fragment(R.layout.fragment_game_list) {
                 rvGameList.isVisible = loadState.source.refresh is LoadState.NotLoading
             }
         }
-        //loadData()
         viewModel.getGameList(requireContext())
+
+        val bundle = Bundle().apply {
+            putString(Constant.VIEW_NAME, TAG)
+        }
+        logEvent(firebaseInstance, Constant.ENTERED_VIEW_EVENT, bundle)
     }
 
     private fun setupSearch() {

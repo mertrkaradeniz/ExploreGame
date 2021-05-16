@@ -1,4 +1,4 @@
-package com.mertrizakaradeniz.exploregame.ui.fragments.list
+package com.mertrizakaradeniz.exploregame.ui.list
 
 import android.content.Context
 import androidx.lifecycle.*

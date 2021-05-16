@@ -5,7 +5,9 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
+import android.os.Bundle
 import android.view.inputmethod.InputMethodManager
+import com.google.firebase.analytics.FirebaseAnalytics
 
 class Utils {
 
@@ -48,6 +50,11 @@ class Utils {
                 )
             }
         }
+
+        fun logEvent(firebaseInstance: FirebaseAnalytics, eventName: String, bundle: Bundle) {
+            firebaseInstance.logEvent(eventName, bundle)
+        }
+
     }
 
 }

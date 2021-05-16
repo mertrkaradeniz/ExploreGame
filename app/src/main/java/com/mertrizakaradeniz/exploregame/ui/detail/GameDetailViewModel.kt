@@ -1,4 +1,4 @@
-package com.mertrizakaradeniz.exploregame.ui.fragments.detail
+package com.mertrizakaradeniz.exploregame.ui.detail
 
 import android.content.Context
 import androidx.lifecycle.LiveData

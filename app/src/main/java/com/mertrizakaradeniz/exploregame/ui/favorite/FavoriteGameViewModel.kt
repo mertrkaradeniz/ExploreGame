@@ -1,4 +1,4 @@
-package com.mertrizakaradeniz.exploregame.ui.fragments.favorite
+package com.mertrizakaradeniz.exploregame.ui.favorite
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel

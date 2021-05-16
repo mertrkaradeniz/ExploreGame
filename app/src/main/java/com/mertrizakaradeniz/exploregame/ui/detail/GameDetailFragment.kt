@@ -1,4 +1,4 @@
-package com.mertrizakaradeniz.exploregame.ui.fragments.detail
+package com.mertrizakaradeniz.exploregame.ui.detail
 
 import android.os.Bundle
 import android.text.Html
@@ -7,23 +7,34 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.viewModels
 import coil.load
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.mertrizakaradeniz.exploregame.R
 import com.mertrizakaradeniz.exploregame.data.models.Game
 import com.mertrizakaradeniz.exploregame.databinding.FragmentGameDetailBinding
 import com.mertrizakaradeniz.exploregame.ui.main.MainActivity
+import com.mertrizakaradeniz.exploregame.utils.Constant.ENTERED_VIEW_EVENT
+import com.mertrizakaradeniz.exploregame.utils.Constant.REMOVE_GAME_EVENT
+import com.mertrizakaradeniz.exploregame.utils.Constant.SAVE_GAME_EVENT
+import com.mertrizakaradeniz.exploregame.utils.Constant.VIEW_NAME
 import com.mertrizakaradeniz.exploregame.utils.Resource
+import com.mertrizakaradeniz.exploregame.utils.Utils
+import com.mertrizakaradeniz.exploregame.utils.Utils.Companion.logEvent
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class GameDetailFragment : Fragment(R.layout.fragment_game_detail) {
 
     private var _binding: FragmentGameDetailBinding? = null
     private val binding get() = _binding!!
+
+    @Inject
+    lateinit var firebaseInstance: FirebaseAnalytics
+    private val TAG = "GameDetailFragment"
 
     private val viewModel: GameDetailViewModel by viewModels()
     private lateinit var game: Game
@@ -42,6 +53,10 @@ class GameDetailFragment : Fragment(R.layout.fragment_game_detail) {
         game = arguments?.get("game") as Game
         setupObservers()
         viewModel.fetchGameDetail(requireContext(), game.id.toString())
+        val bundle = Bundle().apply {
+            putString(VIEW_NAME, TAG)
+        }
+        logEvent(firebaseInstance, ENTERED_VIEW_EVENT, bundle)
     }
 
     override fun onDestroyView() {
@@ -87,7 +102,7 @@ class GameDetailFragment : Fragment(R.layout.fragment_game_detail) {
     }
 
     private fun setupFab() {
-        if(isFavorite) {
+        if (isFavorite) {
             binding.fabAddFavourite.setImageResource(R.drawable.ic_delete)
         } else {
             binding.fabAddFavourite.setImageResource(R.drawable.ic_favorite_filled)
@@ -97,24 +112,29 @@ class GameDetailFragment : Fragment(R.layout.fragment_game_detail) {
 
     private fun handleClickEvent() {
         binding.fabAddFavourite.apply {
+            val bundle = Bundle()
+            bundle.putSerializable("game", game)
             setOnClickListener {
                 if (isFavorite) {
                     setImageResource(R.drawable.ic_delete)
                     game.isFavorite = false
                     isFavorite = false
                     viewModel.saveFavoriteGame(game)
-                    Snackbar.make(binding.root, "Game unsaved successfully", Snackbar.LENGTH_SHORT).show()
+                    Snackbar.make(binding.root, "Game unsaved successfully", Snackbar.LENGTH_SHORT)
+                        .show()
+                    logEvent(firebaseInstance, SAVE_GAME_EVENT, bundle)
                 } else {
                     setImageResource(R.drawable.ic_favorite_filled)
                     game.isFavorite = true
                     isFavorite = true
                     viewModel.saveFavoriteGame(game)
-                    Snackbar.make(binding.root, "Game saved successfully", Snackbar.LENGTH_SHORT).show()
+                    Snackbar.make(binding.root, "Game saved successfully", Snackbar.LENGTH_SHORT)
+                        .show()
+                    logEvent(firebaseInstance, REMOVE_GAME_EVENT, bundle)
                 }
             }
         }
     }
-
 
     private fun setGameDetail(gameDetailResponse: Game) {
         binding.apply {

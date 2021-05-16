@@ -48,7 +48,4 @@ class GamePagingSource(
         }
     }
 
-    private fun removeItemsForViewPager(games: MutableList<Game>) {
-
-    }
 }

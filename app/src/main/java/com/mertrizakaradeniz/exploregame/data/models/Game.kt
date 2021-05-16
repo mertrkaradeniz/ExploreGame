@@ -10,8 +10,8 @@ import java.io.Serializable
 data class Game(
     @PrimaryKey @SerializedName("id") val id: Int,
     @SerializedName("name") val name: String,
-    @SerializedName("released") val released: String,
-    @SerializedName("rating") val rating: Float,
+    @SerializedName("released") val released: String?,
+    @SerializedName("rating") val rating: Float?,
     @SerializedName("metacritic") val metacritic: Int?,
     @SerializedName("description") val description: String?,
     @SerializedName("background_image") val imageUrl: String?,
