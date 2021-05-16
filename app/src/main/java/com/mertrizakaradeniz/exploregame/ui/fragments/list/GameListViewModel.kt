@@ -3,14 +3,12 @@ package com.mertrizakaradeniz.exploregame.ui.fragments.list
 import android.content.Context
 import androidx.lifecycle.*
 import androidx.paging.*
-import com.mertrizakaradeniz.exploregame.adapters.GamePagingSource
 import com.mertrizakaradeniz.exploregame.data.local.GameDao
 import com.mertrizakaradeniz.exploregame.data.models.Game
 import com.mertrizakaradeniz.exploregame.data.models.GamesResponse
 import com.mertrizakaradeniz.exploregame.data.remote.GameApi
 import com.mertrizakaradeniz.exploregame.data.repository.GameRepository
 import com.mertrizakaradeniz.exploregame.utils.Constant.DEFAULT_SEARCH_QUERY
-import com.mertrizakaradeniz.exploregame.utils.Constant.QUERY_PAGE_SIZE
 import com.mertrizakaradeniz.exploregame.utils.Resource
 import com.mertrizakaradeniz.exploregame.utils.Utils
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -56,9 +54,9 @@ class GameListViewModel @Inject constructor(
         safeGetGameListCall(context)
     }
 
-    fun searchDatabase(searchQuery: String): LiveData<List<Game>> {
-        return repository.searchDatabase(searchQuery)
-    }
+    /*fun searchDatabase(searchQuery: String): LiveData<List<Game>> {
+        return repository.searchFavoriteGames(searchQuery)
+    }*/
 
     /*fun searchGame(context: Context, searchQuery: String) = viewModelScope.launch {
         safeSearchGameCall(context, searchQuery)

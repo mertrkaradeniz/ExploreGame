@@ -2,6 +2,7 @@ package com.mertrizakaradeniz.exploregame.ui.fragments.detail
 
 import android.os.Bundle
 import android.text.Html
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -26,6 +27,7 @@ class GameDetailFragment : Fragment(R.layout.fragment_game_detail) {
 
     private val viewModel: GameDetailViewModel by viewModels()
     private lateinit var game: Game
+    private var isFavorite: Boolean = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -37,17 +39,9 @@ class GameDetailFragment : Fragment(R.layout.fragment_game_detail) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         game = arguments?.get("game") as Game
         setupObservers()
-
         viewModel.fetchGameDetail(requireContext(), game.id.toString())
-
-        binding.fabAddFavourite.setOnClickListener {
-            game.isFavorite = true
-            viewModel.saveFavoriteGame(game)
-            Snackbar.make(view, "Game saved successfully", Snackbar.LENGTH_SHORT).show()
-        }
     }
 
     override fun onDestroyView() {
@@ -56,6 +50,14 @@ class GameDetailFragment : Fragment(R.layout.fragment_game_detail) {
     }
 
     private fun setupObservers() {
+
+        viewModel.checkGameIsFavorite(game.id).observe(viewLifecycleOwner) { list ->
+            list?.let {
+                Log.d("GameDetailFragment", list.isEmpty().toString())
+                isFavorite = list.isNotEmpty()
+                setupFab()
+            }
+        }
 
         viewModel.gameDetail.observe(viewLifecycleOwner) { response ->
             when (response) {
@@ -81,7 +83,38 @@ class GameDetailFragment : Fragment(R.layout.fragment_game_detail) {
                 }
             }
         }
+
     }
+
+    private fun setupFab() {
+        if(isFavorite) {
+            binding.fabAddFavourite.setImageResource(R.drawable.ic_delete)
+        } else {
+            binding.fabAddFavourite.setImageResource(R.drawable.ic_favorite_filled)
+        }
+        handleClickEvent()
+    }
+
+    private fun handleClickEvent() {
+        binding.fabAddFavourite.apply {
+            setOnClickListener {
+                if (isFavorite) {
+                    setImageResource(R.drawable.ic_delete)
+                    game.isFavorite = false
+                    isFavorite = false
+                    viewModel.saveFavoriteGame(game)
+                    Snackbar.make(binding.root, "Game unsaved successfully", Snackbar.LENGTH_SHORT).show()
+                } else {
+                    setImageResource(R.drawable.ic_favorite_filled)
+                    game.isFavorite = true
+                    isFavorite = true
+                    viewModel.saveFavoriteGame(game)
+                    Snackbar.make(binding.root, "Game saved successfully", Snackbar.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
 
     private fun setGameDetail(gameDetailResponse: Game) {
         binding.apply {
@@ -90,7 +123,8 @@ class GameDetailFragment : Fragment(R.layout.fragment_game_detail) {
             }
             tvDetailName.text = gameDetailResponse.name
             tvDetailReleased.text = "Release data: ${gameDetailResponse.released}"
-            tvDetailMetacritic.text = "Metacritic date: ${gameDetailResponse.metacritic!!.toString()}"
+            tvDetailMetacritic.text =
+                "Metacritic date: ${gameDetailResponse.metacritic!!.toString()}"
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
                 tvDetailDescription.text = Html.fromHtml(
                     gameDetailResponse.description,

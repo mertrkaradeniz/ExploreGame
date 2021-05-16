@@ -3,7 +3,6 @@ package com.mertrizakaradeniz.exploregame.data.repository
 import androidx.lifecycle.LiveData
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
-import androidx.paging.PagingSource
 import androidx.paging.liveData
 import com.mertrizakaradeniz.exploregame.adapters.GamePagingSource
 import com.mertrizakaradeniz.exploregame.data.local.GameDao
@@ -48,10 +47,10 @@ class GameRepository @Inject constructor(
 
     suspend fun deleteAll() = gameDao.deleteAll()
 
-    fun searchDatabase(searchQuery: String): LiveData<List<Game>> {
-        return gameDao.searchDatabase(searchQuery)
-    }
-
     fun getAllGameFromDatabase() = gameDao.getAllGame()
+
+    fun searchFavoriteGames(searchQuery: String) = gameDao.searchFavoriteGames(searchQuery)
+
+    fun checkGameIsFavorite(id: Int) = gameDao.checkGameIsFavorite(id)
 
 }

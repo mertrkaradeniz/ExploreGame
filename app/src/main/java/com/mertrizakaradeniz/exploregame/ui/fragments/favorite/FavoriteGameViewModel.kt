@@ -31,8 +31,6 @@ class FavoriteGameViewModel @Inject constructor(
         }
     }
 
-    fun searchDatabase(searchQuery: String): LiveData<List<Game>> {
-        return repository.searchDatabase(searchQuery)
-    }
+    fun searchFavoriteGames(searchQuery: String) = repository.searchFavoriteGames(searchQuery)
 
 }

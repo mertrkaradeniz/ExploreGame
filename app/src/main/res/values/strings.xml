@@ -6,5 +6,5 @@
     <string name="menu_sort_by">sort_by</string>
     <string name="menu_priority_high">priority_high</string>
     <string name="menu_priority_low">priority_low</string>
-    <string name="menu_delete_all">delete_all</string>
+    <string name="menu_delete_all">delete all</string>
 </resources>

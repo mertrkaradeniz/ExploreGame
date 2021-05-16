@@ -38,8 +38,8 @@ class FavoriteGameFragment : Fragment(R.layout.fragment_favourite_game),
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupObservers()
         setHasOptionsMenu(true)
+        setupObservers()
         setupRecyclerView()
         handleClickEvent()
         setupItemTouchEvent()
@@ -49,7 +49,9 @@ class FavoriteGameFragment : Fragment(R.layout.fragment_favourite_game),
         inflater.inflate(R.menu.favorite_menu, menu)
         val search = menu.findItem(R.id.menu_search)
         val searchView = search.actionView as? SearchView
+        searchView?.maxWidth= Integer.MAX_VALUE
         searchView?.setOnQueryTextListener(this)
+
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -152,9 +154,9 @@ class FavoriteGameFragment : Fragment(R.layout.fragment_favourite_game),
 
     private fun searchThroughDatabase(query: String) {
         val searchQuery = "%$query%"
-        viewModel.searchDatabase(searchQuery).observe(this) { list ->
+        viewModel.searchFavoriteGames(searchQuery).observe(this) { list ->
             list?.let {
-                //favoriteGamesAdapter.differ.submitList(list)
+                favoriteGamesAdapter.differ.submitList(list)
             }
         }
     }

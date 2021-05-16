@@ -26,6 +26,10 @@ interface GameDao {
 
     /*@Query("SELECT * FROM games WHERE name LIKE :name")
     suspend fun searchByName(name: String)*/
+
+    @Query("SELECT * FROM games WHERE id = :id and is_fav = :isFav")
+    fun checkGameIsFavorite(id: Int, isFav: Boolean = true): LiveData<List<Game>>
+
     @Delete
     suspend fun deleteGame(game: Game)
 
@@ -35,8 +39,8 @@ interface GameDao {
     @Query("DELETE FROM games WHERE is_fav = 'false'")
     suspend fun clearDatabase()
 
-    @Query("SELECT * FROM games WHERE name LIKE :searchQuery")
-    fun searchDatabase(searchQuery: String): LiveData<List<Game>>
+    @Query("SELECT * FROM games WHERE name LIKE :searchQuery and is_fav = :isFav")
+    fun searchFavoriteGames(searchQuery: String, isFav: Boolean = true): LiveData<List<Game>>
 
     @Query("SELECT * FROM games")
     fun getAllGame(): PagingSource<Int, Game>

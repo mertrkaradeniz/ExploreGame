@@ -72,4 +72,5 @@ class GameDetailViewModel @Inject constructor(
         gameRepository.deleteGame(game)
     }
 
+    fun checkGameIsFavorite(id: Int) = gameRepository.checkGameIsFavorite(id)
 }
