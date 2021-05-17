@@ -2,7 +2,6 @@ package com.mertrizakaradeniz.exploregame.ui.favorite
 
 import android.app.AlertDialog
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.appcompat.widget.SearchView
@@ -16,7 +15,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.mertrizakaradeniz.exploregame.R
 import com.mertrizakaradeniz.exploregame.adapters.GameListAdapter
-import com.mertrizakaradeniz.exploregame.databinding.FragmentFavouriteGameBinding
+import com.mertrizakaradeniz.exploregame.databinding.FragmentFavoriteGameBinding
 import com.mertrizakaradeniz.exploregame.ui.main.MainActivity
 import com.mertrizakaradeniz.exploregame.utils.Constant
 import com.mertrizakaradeniz.exploregame.utils.Constant.REMOVE_GAME_EVENT
@@ -25,14 +24,14 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class FavoriteGameFragment : Fragment(R.layout.fragment_favourite_game),
+class FavoriteGameFragment : Fragment(R.layout.fragment_favorite_game),
     SearchView.OnQueryTextListener {
 
     @Inject
     lateinit var firebaseInstance: FirebaseAnalytics
 
     private val viewModel: FavoriteGameViewModel by viewModels()
-    private var _binding: FragmentFavouriteGameBinding? = null
+    private var _binding: FragmentFavoriteGameBinding? = null
     private val binding get() = _binding!!
     private val favoriteGamesAdapter by lazy { GameListAdapter() }
 
@@ -40,7 +39,7 @@ class FavoriteGameFragment : Fragment(R.layout.fragment_favourite_game),
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentFavouriteGameBinding.inflate(inflater, container, false)
+        _binding = FragmentFavoriteGameBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -91,8 +90,20 @@ class FavoriteGameFragment : Fragment(R.layout.fragment_favourite_game),
 
     private fun setupObservers() {
         viewModel.getAllFavoriteGames().observe(viewLifecycleOwner, { favoriteGames ->
-            Log.d("FavoriteGameFragment", favoriteGames.toString())
             favoriteGamesAdapter.differ.submitList(favoriteGames)
+            if (favoriteGames.isEmpty()) {
+                binding.apply {
+                    lottieAnimationView.visibility = View.VISIBLE
+                    "There is no favorite game".also { TvWarning.text = it }
+                    TvWarning.visibility = View.VISIBLE
+                }
+            } else {
+                binding.apply {
+                    lottieAnimationView.visibility = View.GONE
+                    "".also { TvWarning.text = it }
+                    TvWarning.visibility = View.GONE
+                }
+            }
         })
     }
 
@@ -102,7 +113,7 @@ class FavoriteGameFragment : Fragment(R.layout.fragment_favourite_game),
                 putParcelable("game", game)
             }
             findNavController().navigate(
-                R.id.action_favouriteGameFragment_to_gameDetailFragment, bundle
+                R.id.action_favoriteGameFragment_to_gameDetailFragment, bundle
             )
         }
     }
@@ -177,6 +188,19 @@ class FavoriteGameFragment : Fragment(R.layout.fragment_favourite_game),
         viewModel.searchFavoriteGames(searchQuery).observe(this) { list ->
             list?.let {
                 favoriteGamesAdapter.differ.submitList(list)
+                if (list.isEmpty()) {
+                    binding.apply {
+                        lottieAnimationView.visibility = View.VISIBLE
+                        "We could not found any result!".also { TvWarning.text = it }
+                        TvWarning.visibility = View.VISIBLE
+                    }
+                } else {
+                    binding.apply {
+                        lottieAnimationView.visibility = View.GONE
+                        "".also { TvWarning.text = it }
+                        TvWarning.visibility = View.GONE
+                    }
+                }
             }
         }
     }

@@ -12,7 +12,11 @@
         tools:layout="@layout/fragment_game_list" >
         <action
             android:id="@+id/action_gameListFragment_to_gameDetailFragment"
-            app:destination="@id/gameDetailFragment" />
+            app:destination="@id/gameDetailFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
     </fragment>
     <fragment
         android:id="@+id/gameDetailFragment"
@@ -26,10 +30,14 @@
     <fragment
         android:id="@+id/favouriteGameFragment"
         android:name="com.mertrizakaradeniz.exploregame.ui.favorite.FavoriteGameFragment"
-        android:label="Favourite Games"
-        tools:layout="@layout/fragment_favourite_game" >
+        android:label="Favorite Games"
+        tools:layout="@layout/fragment_favorite_game" >
         <action
-            android:id="@+id/action_favouriteGameFragment_to_gameDetailFragment"
-            app:destination="@id/gameDetailFragment" />
+            android:id="@+id/action_favoriteGameFragment_to_gameDetailFragment"
+            app:destination="@id/gameDetailFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
     </fragment>
 </navigation>

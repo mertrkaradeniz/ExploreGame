@@ -16,4 +16,10 @@
     <color name="black">#000000</color>
     <color name="white">#FFFFFF</color>
 
+    <color name="light_grey">#eeeeee</color>
+    <color name="light_blue">#00adb5</color>
+    <color name="grey">#393e46</color>
+    <color name="dark_grey">#222831</color>
+
+
 </resources>

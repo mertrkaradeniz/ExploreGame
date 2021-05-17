@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">ExploreGame</string>
     <string name="gamesMenuTitle">Games</string>
-    <string name="favouriteMenuTitle">Favourite</string>
+    <string name="favouriteMenuTitle">Favorite</string>
     <string name="menu_search">search</string>
     <string name="menu_sort_by">sort_by</string>
     <string name="menu_priority_high">priority_high</string>
