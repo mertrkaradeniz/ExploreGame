@@ -93,6 +93,8 @@ class FavoriteGameFragment : Fragment(R.layout.fragment_favorite_game),
             favoriteGamesAdapter.differ.submitList(favoriteGames)
             if (favoriteGames.isEmpty()) {
                 binding.apply {
+                    lottieAnimationView.setAnimation("gameboy-advance.json")
+                    lottieAnimationView.playAnimation()
                     lottieAnimationView.visibility = View.VISIBLE
                     "There is no favorite game".also { TvWarning.text = it }
                     TvWarning.visibility = View.VISIBLE
@@ -190,6 +192,7 @@ class FavoriteGameFragment : Fragment(R.layout.fragment_favorite_game),
                 favoriteGamesAdapter.differ.submitList(list)
                 if (list.isEmpty()) {
                     binding.apply {
+                        lottieAnimationView.setAnimation("c-bot.json")
                         lottieAnimationView.visibility = View.VISIBLE
                         "We could not found any result!".also { TvWarning.text = it }
                         TvWarning.visibility = View.VISIBLE
