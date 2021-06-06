@@ -18,8 +18,6 @@
 
 Android App, build with Kotlin due to internship task. I'm using [api.rawg.io](https://api.rawg.io/docs/) for the data source. 
 
-I Hope this Project will help someone, if you feel helped with this project, you can give stars to support me, thank you very much :).
-
 ## Mad Scorecard
 
 [<img src="https://github.com/riyhs/GameKuy-Game-Explorer-App/blob/submission-2/assets/madscore/summary.png"></img>](https://madscorecard.withgoogle.com/scorecards/3380105795/#summary)
